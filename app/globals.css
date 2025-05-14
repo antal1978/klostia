@@ -1,0 +1,55 @@
+/* Aseguramos que las directivas de Tailwind estén en el orden correcto y con la sintaxis adecuada */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Variables CSS personalizadas */
+:root {
+  --primary: #415643;
+  --secondary: #a67d88;
+  --background: #f5f1ec;
+  --accent: #d9bca3;
+  --text: #2e2e2e;
+}
+
+/* Estilos base */
+body {
+  color: var(--text);
+  background: var(--background);
+}
+
+/* Estilos personalizados dentro de las capas de Tailwind */
+@layer base {
+  h1 {
+    @apply text-2xl font-bold mb-4;
+    color: #415643;
+  }
+
+  h2 {
+    @apply text-xl font-semibold mb-3;
+    color: #415643;
+  }
+
+  p {
+    @apply mb-4;
+    color: #2e2e2e;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-[#415643] text-white py-3 px-6 rounded-lg font-medium hover:bg-opacity-90 transition-all;
+  }
+
+  .btn-secondary {
+    @apply bg-[#A67D88] text-white py-3 px-6 rounded-lg font-medium hover:bg-opacity-90 transition-all;
+  }
+
+  .card {
+    @apply bg-white rounded-xl shadow-md p-6 mb-4;
+  }
+
+  .section {
+    @apply py-6 px-4;
+  }
+}
