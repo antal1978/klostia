@@ -1,9 +1,10 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Plus, Minus, Check } from "lucide-react"
+import { loadMaterialsDatabase } from "@/lib/materials-utils"
 
 interface MaterialInput {
   name: string
@@ -19,6 +20,48 @@ export default function ManualInput({ onSubmit, onCancel }: ManualInputProps) {
   const [materials, setMaterials] = useState<MaterialInput[]>([{ name: "", percentage: 100 }])
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [validationError, setValidationError] = useState<string | null>(null)
+  const [databaseMaterials, setDatabaseMaterials] = useState<string[]>([])
+  const [isLoadingMaterials, setIsLoadingMaterials] = useState(true)
+
+  // Cargar materiales de la base de datos
+  useEffect(() => {
+    async function fetchMaterials() {
+      try {
+        setIsLoadingMaterials(true)
+        const database = await loadMaterialsDatabase()
+        const materialNames = database.materials.map((material) => material.name)
+        setDatabaseMaterials(materialNames)
+      } catch (error) {
+        console.error("Error cargando materiales:", error)
+        // Fallback a la lista estática en caso de error
+        setDatabaseMaterials([
+          "Algodón",
+          "Algodón orgánico",
+          "Poliéster",
+          "Poliéster reciclado",
+          "Lana",
+          "Seda",
+          "Lino",
+          "Viscosa",
+          "Elastano",
+          "Acrílico",
+          "Nylon",
+          "Nylon reciclado",
+          "Lyocell (Tencel)",
+          "Modal",
+          "Bambú",
+          "Cáñamo",
+          "Rayón",
+          "Spandex",
+          "Lycra",
+        ])
+      } finally {
+        setIsLoadingMaterials(false)
+      }
+    }
+
+    fetchMaterials()
+  }, [])
 
   const addMaterial = () => {
     if (materials.length < 5) {
@@ -111,29 +154,6 @@ export default function ManualInput({ onSubmit, onCancel }: ManualInputProps) {
     }
   }
 
-  // Lista de materiales comunes para sugerencias
-  const commonMaterials = [
-    "Algodón",
-    "Algodón orgánico",
-    "Poliéster",
-    "Poliéster reciclado",
-    "Lana",
-    "Seda",
-    "Lino",
-    "Viscosa",
-    "Elastano",
-    "Acrílico",
-    "Nylon",
-    "Nylon reciclado",
-    "Lyocell (Tencel)",
-    "Modal",
-    "Bambú",
-    "Cáñamo",
-    "Rayón",
-    "Spandex",
-    "Lycra",
-  ]
-
   return (
     <div className="p-4 bg-white rounded-xl shadow-md">
       <h2 className="text-xl font-semibold text-[#415643] mb-4">Ingresa los materiales manualmente</h2>
@@ -144,14 +164,15 @@ export default function ManualInput({ onSubmit, onCancel }: ManualInputProps) {
             <div className="flex-1">
               <Input
                 type="text"
-                placeholder="Nombre del material"
+                placeholder={isLoadingMaterials ? "Cargando materiales..." : "Nombre del material"}
                 value={material.name}
                 onChange={(e) => updateMaterial(index, "name", e.target.value)}
                 list={`materials-list-${index}`}
                 className={material.name.trim() === "" ? "border-red-300" : ""}
+                disabled={isLoadingMaterials}
               />
               <datalist id={`materials-list-${index}`}>
-                {commonMaterials.map((m, i) => (
+                {databaseMaterials.map((m, i) => (
                   <option key={i} value={m} />
                 ))}
               </datalist>
