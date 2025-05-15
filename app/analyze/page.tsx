@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
-import { ArrowLeft, AlertTriangle, Camera, Edit, FileImage } from "lucide-react"
+import { ArrowLeft, AlertTriangle, Camera, Edit } from "lucide-react"
 import { useRouter, useSearchParams } from "next/navigation"
 import ImageCapture from "@/components/image-capture"
 import ExampleImages from "@/components/example-images"
@@ -98,18 +98,39 @@ export default function AnalyzePage() {
 
       // Cargar la base de datos de materiales
       try {
-        const materialsDBResponse = await fetch("/data/materials-database.json")
+        const materialsDBResponse = await fetch("/data/materials-database.json", {
+          cache: "no-store",
+          headers: {
+            Pragma: "no-cache",
+            "Cache-Control": "no-cache",
+          },
+        })
+
         if (!materialsDBResponse.ok) {
-          throw new Error(`Error al cargar la base de datos: ${materialsDBResponse.status}`)
+          throw new Error(
+            `Error al cargar la base de datos: ${materialsDBResponse.status} ${materialsDBResponse.statusText}`,
+          )
         }
-        const materialsDB = await materialsDBResponse.json()
+
+        let materialsDB
+        try {
+          materialsDB = await materialsDBResponse.json()
+        } catch (jsonError) {
+          throw new Error(
+            `Error al parsear la base de datos: ${jsonError instanceof Error ? jsonError.message : String(jsonError)}`,
+          )
+        }
+
         console.log("Materials database loaded successfully")
 
         // Convertir los materiales ingresados manualmente al formato esperado
         const processedMaterials = materials.map((material) => {
           // Si ya tiene materialId, usarlo directamente (caso de ejemplos)
           if (material.materialId) {
-            return material
+            return {
+              materialId: material.materialId,
+              percentage: material.percentage,
+            }
           }
 
           // Buscar el ID del material en la base de datos
@@ -139,11 +160,26 @@ export default function AnalyzePage() {
           })
 
           if (!analysisResult.ok) {
-            const errorText = await analysisResult.text()
+            let errorText
+            try {
+              const errorData = await analysisResult.json()
+              errorText = errorData.error || `Error ${analysisResult.status}`
+              setDebugInfo(JSON.stringify(errorData.details || errorData))
+            } catch (e) {
+              errorText = await analysisResult.text()
+            }
             throw new Error(`Error en la API: ${analysisResult.status} - ${errorText}`)
           }
 
-          const result = await analysisResult.json()
+          let result
+          try {
+            result = await analysisResult.json()
+          } catch (jsonError) {
+            throw new Error(
+              `Error al parsear la respuesta: ${jsonError instanceof Error ? jsonError.message : String(jsonError)}`,
+            )
+          }
+
           console.log("API response received:", result)
 
           if (!result.success) {
@@ -189,19 +225,19 @@ export default function AnalyzePage() {
           setError(
             `Error al comunicarse con la API: ${apiError instanceof Error ? apiError.message : String(apiError)}`,
           )
-          setDebugInfo("Error en la comunicación con la API de análisis")
+          setDebugInfo(`Error en la comunicación con la API de análisis. Detalles: ${String(apiError)}`)
           setIsProcessing(false)
         }
       } catch (dbError) {
         console.error("Database error:", dbError)
         setError(`Error al cargar la base de datos: ${dbError instanceof Error ? dbError.message : String(dbError)}`)
-        setDebugInfo("Error al cargar la base de datos de materiales")
+        setDebugInfo(`Error al cargar la base de datos de materiales. Detalles: ${String(dbError)}`)
         setIsProcessing(false)
       }
     } catch (error) {
       console.error("General error processing materials:", error)
       setError(`Error al procesar los materiales: ${error instanceof Error ? error.message : String(error)}`)
-      setDebugInfo("Error general en el procesamiento de materiales")
+      setDebugInfo(`Error general en el procesamiento de materiales. Detalles: ${String(error)}`)
       setIsProcessing(false)
     }
   }
@@ -231,11 +267,7 @@ export default function AnalyzePage() {
           <div className="mt-4">
             <ImageCapture onCapture={handleImageCaptured} onCancel={() => router.push("/")} />
 
-            <div className="mt-4 flex flex-col gap-2">
-              <Button onClick={() => setExampleMode(true)} variant="outline" className="w-full">
-                <FileImage className="mr-2 h-4 w-4" />
-                Usar ejemplos
-              </Button>
+            <div className="mt-4">
               <Button onClick={handleManualInput} variant="outline" className="w-full">
                 <Edit className="mr-2 h-4 w-4" />
                 Ingresar manualmente

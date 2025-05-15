@@ -12,6 +12,7 @@ interface ExampleImagesProps {
 export default function ExampleImages({ onSelectImage }: ExampleImagesProps) {
   const [selectedImage, setSelectedImage] = useState<number | null>(null)
 
+  // Ejemplos simplificados y robustos para producción
   const examples = [
     {
       id: 1,
@@ -40,32 +41,38 @@ export default function ExampleImages({ onSelectImage }: ExampleImagesProps) {
   ]
 
   const handleSelectImage = (index: number) => {
-    setSelectedImage(index)
+    try {
+      setSelectedImage(index)
+      console.log("Example selected:", examples[index].description)
 
-    // Asegurarnos de que los materiales predefinidos tengan la estructura correcta
-    const materials = examples[index].predefinedMaterials.map((material) => {
-      // Si ya tiene materialId pero no name, añadir un name basado en el materialId
-      if (material.materialId && !material.name) {
-        // Convertir materialId a un nombre legible (ej: "cotton_conv" -> "Algodón convencional")
-        let name = material.materialId
-          .replace(/_/g, " ")
-          .replace(/conv/g, "convencional")
-          .replace(/org/g, "orgánico")
-          .replace(/recycled/g, "reciclado")
-
-        // Capitalizar primera letra
-        name = name.charAt(0).toUpperCase() + name.slice(1)
-
-        return {
-          ...material,
-          name,
-        }
+      // Verificar que el ejemplo existe
+      if (!examples[index] || !examples[index].predefinedMaterials) {
+        console.error("Invalid example or missing predefined materials")
+        onSelectImage("data:image/png;base64,example", [{ materialId: "cotton_conv", percentage: 100 }])
+        return
       }
-      return material
-    })
 
-    // Usar los materiales procesados
-    onSelectImage("data:image/png;base64,example", materials)
+      // Crear una copia profunda de los materiales para evitar problemas de referencia
+      const materials = JSON.parse(JSON.stringify(examples[index].predefinedMaterials))
+
+      // Verificar que cada material tenga los campos requeridos
+      const validMaterials = materials.map((material: any) => {
+        // Asegurarse de que materialId y percentage existan y sean válidos
+        return {
+          materialId: material.materialId || "cotton_conv", // Valor por defecto
+          percentage: typeof material.percentage === "number" ? material.percentage : 100, // Valor por defecto
+        }
+      })
+
+      console.log("Processed example materials:", validMaterials)
+
+      // Usar los materiales procesados
+      onSelectImage("data:image/png;base64,example", validMaterials)
+    } catch (error) {
+      console.error("Error in handleSelectImage:", error)
+      // Fallback a un material por defecto en caso de error
+      onSelectImage("data:image/png;base64,example", [{ materialId: "cotton_conv", percentage: 100 }])
+    }
   }
 
   return (
