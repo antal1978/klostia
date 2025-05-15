@@ -67,14 +67,18 @@ export default function AnalyzePage() {
   }
 
   const handleManualInput = () => {
+    console.log("Switching to manual input mode")
     setManualMode(true)
+    // Importante: si hay una imagen capturada, la limpiamos para evitar confusiones
+    if (imageData) {
+      setImageData(null)
+    }
   }
 
   const processManualMaterials = async (materials: any[]) => {
     try {
-      setIsProcessing(true)
-
       console.log("Processing manual materials:", materials)
+      setIsProcessing(true)
 
       // Cargar la base de datos de materiales
       const materialsDBResponse = await fetch("/data/materials-database.json")
@@ -206,13 +210,14 @@ export default function AnalyzePage() {
           </div>
         )}
 
-        {manualMode && !imageData && (
+        {manualMode && (
           <div className="mt-4">
             <ManualInput
               onSubmit={processManualMaterials}
               onCancel={() => {
                 setManualMode(false)
                 setCaptureMode(true)
+                setImageData(null)
               }}
             />
           </div>
