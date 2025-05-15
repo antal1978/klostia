@@ -18,6 +18,7 @@ export default function AnalyzePage() {
   const [imageData, setImageData] = useState<string | null>(null)
   const [isProcessing, setIsProcessing] = useState<boolean>(false)
   const [error, setError] = useState<string | null>(null)
+  const [debugInfo, setDebugInfo] = useState<string | null>(null)
 
   // Verificar si se debe abrir directamente el modo de ejemplos
   useEffect(() => {
@@ -77,82 +78,130 @@ export default function AnalyzePage() {
 
   const processManualMaterials = async (materials: any[]) => {
     try {
-      console.log("Processing manual materials:", materials)
+      console.log("Starting to process manual materials:", materials)
       setIsProcessing(true)
+      setError(null)
+      setDebugInfo(null)
+
+      // Validar que los materiales tengan datos válidos
+      if (!materials || materials.length === 0) {
+        throw new Error("No se proporcionaron materiales para analizar")
+      }
+
+      // Verificar que cada material tenga nombre/materialId y porcentaje
+      const invalidMaterials = materials.filter((m) => (!m.name && !m.materialId) || !m.percentage)
+      if (invalidMaterials.length > 0) {
+        throw new Error("Algunos materiales no tienen identificación o porcentaje válido")
+      }
+
+      console.log("Materials validated, loading database...")
 
       // Cargar la base de datos de materiales
-      const materialsDBResponse = await fetch("/data/materials-database.json")
-      const materialsDB = await materialsDBResponse.json()
-
-      // Convertir los materiales ingresados manualmente al formato esperado
-      const processedMaterials = materials.map((material) => {
-        // Si ya tiene materialId, usarlo directamente (caso de ejemplos)
-        if (material.materialId) {
-          return material
+      try {
+        const materialsDBResponse = await fetch("/data/materials-database.json")
+        if (!materialsDBResponse.ok) {
+          throw new Error(`Error al cargar la base de datos: ${materialsDBResponse.status}`)
         }
+        const materialsDB = await materialsDBResponse.json()
+        console.log("Materials database loaded successfully")
 
-        // Buscar el ID del material en la base de datos
-        const dbMaterial = materialsDB.materials.find((m: any) => m.name.toLowerCase() === material.name.toLowerCase())
+        // Convertir los materiales ingresados manualmente al formato esperado
+        const processedMaterials = materials.map((material) => {
+          // Si ya tiene materialId, usarlo directamente (caso de ejemplos)
+          if (material.materialId) {
+            return material
+          }
 
-        // Si se encuentra, usar ese ID, de lo contrario usar un ID genérico
-        const materialId = dbMaterial ? dbMaterial.id : material.name.toLowerCase().replace(/\s+/g, "_")
+          // Buscar el ID del material en la base de datos
+          const dbMaterial = materialsDB.materials.find(
+            (m: any) => m.name.toLowerCase() === material.name.toLowerCase(),
+          )
 
-        return {
-          materialId,
-          percentage: material.percentage,
+          // Si se encuentra, usar ese ID, de lo contrario usar un ID genérico
+          const materialId = dbMaterial ? dbMaterial.id : material.name.toLowerCase().replace(/\s+/g, "_")
+
+          return {
+            materialId,
+            percentage: material.percentage,
+          }
+        })
+
+        console.log("Materials processed, sending to API:", processedMaterials)
+
+        // Analizar la composición con los materiales
+        try {
+          const analysisResult = await fetch("/api/analyze-predefined", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ materials: processedMaterials }),
+          })
+
+          if (!analysisResult.ok) {
+            const errorText = await analysisResult.text()
+            throw new Error(`Error en la API: ${analysisResult.status} - ${errorText}`)
+          }
+
+          const result = await analysisResult.json()
+          console.log("API response received:", result)
+
+          if (!result.success) {
+            throw new Error(result.error || "Error al analizar los materiales")
+          }
+
+          // Guardar los resultados en sessionStorage para acceder desde la página de resultados
+          const analysisData = {
+            ocrText: materials.map((m) => `${m.percentage}% ${m.name || m.materialId}`).join(", "),
+            confidence: 100,
+            materialsDetected: processedMaterials,
+            analysisResult: result.analysisResult,
+          }
+
+          console.log("Saving analysis data to sessionStorage:", analysisData)
+          sessionStorage.setItem("analysisData", JSON.stringify(analysisData))
+
+          // Guardar en el historial
+          const historyItem = {
+            id: Date.now().toString(),
+            date: new Date().toLocaleString(),
+            materials: materials.map((m) => ({
+              name: m.name || materialsDB.materials.find((dbm: any) => dbm.id === m.materialId)?.name || m.materialId,
+              percentage: m.percentage,
+            })),
+            score: result.analysisResult.totalScore,
+          }
+
+          // Obtener historial existente
+          const existingHistory = localStorage.getItem("analysisHistory")
+          const history = existingHistory ? JSON.parse(existingHistory) : []
+
+          // Añadir nuevo item y guardar
+          history.unshift(historyItem)
+          localStorage.setItem("analysisHistory", JSON.stringify(history.slice(0, 20))) // Limitar a 20 items
+
+          console.log("History saved, redirecting to results page")
+
+          // Redirigir a la página de resultados
+          router.push("/results")
+        } catch (apiError) {
+          console.error("API error:", apiError)
+          setError(
+            `Error al comunicarse con la API: ${apiError instanceof Error ? apiError.message : String(apiError)}`,
+          )
+          setDebugInfo("Error en la comunicación con la API de análisis")
+          setIsProcessing(false)
         }
-      })
-
-      // Analizar la composición con los materiales
-      const analysisResult = await fetch("/api/analyze-predefined", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ materials: processedMaterials }),
-      })
-
-      const result = await analysisResult.json()
-
-      if (!result.success) {
-        throw new Error(result.error || "Error al analizar los materiales")
+      } catch (dbError) {
+        console.error("Database error:", dbError)
+        setError(`Error al cargar la base de datos: ${dbError instanceof Error ? dbError.message : String(dbError)}`)
+        setDebugInfo("Error al cargar la base de datos de materiales")
+        setIsProcessing(false)
       }
-
-      // Guardar los resultados en sessionStorage para acceder desde la página de resultados
-      sessionStorage.setItem(
-        "analysisData",
-        JSON.stringify({
-          ocrText: materials.map((m) => `${m.percentage}% ${m.name || m.materialId}`).join(", "),
-          confidence: 100,
-          materialsDetected: processedMaterials,
-          analysisResult: result.analysisResult,
-        }),
-      )
-
-      // Guardar en el historial
-      const historyItem = {
-        id: Date.now().toString(),
-        date: new Date().toLocaleString(),
-        materials: materials.map((m) => ({
-          name: m.name || materialsDB.materials.find((dbm: any) => dbm.id === m.materialId)?.name || m.materialId,
-          percentage: m.percentage,
-        })),
-        score: result.analysisResult.totalScore,
-      }
-
-      // Obtener historial existente
-      const existingHistory = localStorage.getItem("analysisHistory")
-      const history = existingHistory ? JSON.parse(existingHistory) : []
-
-      // Añadir nuevo item y guardar
-      history.unshift(historyItem)
-      localStorage.setItem("analysisHistory", JSON.stringify(history.slice(0, 20))) // Limitar a 20 items
-
-      // Redirigir a la página de resultados
-      router.push("/results")
     } catch (error) {
-      console.error("Error processing materials:", error)
-      setError("Error al procesar los materiales. Por favor, intenta de nuevo.")
+      console.error("General error processing materials:", error)
+      setError(`Error al procesar los materiales: ${error instanceof Error ? error.message : String(error)}`)
+      setDebugInfo("Error general en el procesamiento de materiales")
       setIsProcessing(false)
     }
   }
@@ -164,6 +213,7 @@ export default function AnalyzePage() {
     setExampleMode(false)
     setManualMode(false)
     setError(null)
+    setDebugInfo(null)
     setIsProcessing(false)
   }
 
@@ -251,6 +301,8 @@ export default function AnalyzePage() {
                       <AlertTriangle className="h-8 w-8 text-red-500 mr-2" />
                       <p className="text-red-500 font-medium">{error}</p>
                     </div>
+
+                    {debugInfo && <p className="text-sm text-gray-500 mb-4">{debugInfo}</p>}
 
                     <div className="mt-4 flex flex-col gap-2">
                       <Button onClick={handleManualInput} className="w-full bg-[#415643]">

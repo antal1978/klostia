@@ -3,38 +3,95 @@ import { analyzeFabricComposition, loadMaterialsDatabase } from "@/lib/materials
 
 export async function POST(request: NextRequest) {
   try {
+    console.log("API: analyze-predefined endpoint called")
+
+    // Obtener los datos de la solicitud
     const data = await request.json()
     const { materials } = data
 
+    console.log("API: Received materials:", materials)
+
+    // Validar los materiales
     if (!materials || !Array.isArray(materials) || materials.length === 0) {
-      return NextResponse.json({ success: false, error: "No se proporcionaron materiales válidos" }, { status: 400 })
+      console.error("API: Invalid materials provided:", materials)
+      return NextResponse.json(
+        {
+          success: false,
+          error: "No se proporcionaron materiales válidos",
+        },
+        { status: 400 },
+      )
     }
 
-    console.log("Analyzing predefined materials:", materials)
+    // Validar que cada material tenga materialId y percentage
+    const invalidMaterials = materials.filter((m) => !m.materialId || typeof m.percentage !== "number")
+    if (invalidMaterials.length > 0) {
+      console.error("API: Some materials are invalid:", invalidMaterials)
+      return NextResponse.json(
+        {
+          success: false,
+          error: "Algunos materiales no tienen ID o porcentaje válido",
+          invalidMaterials,
+        },
+        { status: 400 },
+      )
+    }
+
+    // Registrar los materiales validados para depuración
+    console.log(
+      "API: Valid materials:",
+      materials.map((m) => ({
+        materialId: m.materialId,
+        percentage: m.percentage,
+      })),
+    )
+
+    console.log("API: Materials validated, loading database...")
 
     // Cargar la base de datos de materiales
-    const materialsDB = await loadMaterialsDatabase()
+    try {
+      const materialsDB = await loadMaterialsDatabase()
+      console.log("API: Materials database loaded successfully")
 
-    // Analizar la composición de materiales
-    const analysisResult = analyzeFabricComposition(materials, materialsDB)
+      // Analizar la composición de materiales
+      console.log("API: Analyzing materials composition...")
+      const analysisResult = analyzeFabricComposition(materials, materialsDB)
 
-    if (!analysisResult) {
-      return NextResponse.json({ success: false, error: "Error al analizar los materiales" }, { status: 500 })
+      if (!analysisResult) {
+        console.error("API: Analysis failed, no result returned")
+        return NextResponse.json(
+          {
+            success: false,
+            error: "Error al analizar los materiales",
+          },
+          { status: 500 },
+        )
+      }
+
+      console.log("API: Analysis complete, score:", analysisResult.totalScore)
+
+      // Devolver los resultados
+      return NextResponse.json({
+        success: true,
+        analysisResult,
+      })
+    } catch (dbError) {
+      console.error("API: Error loading materials database:", dbError)
+      return NextResponse.json(
+        {
+          success: false,
+          error: `Error al cargar la base de datos: ${dbError instanceof Error ? dbError.message : String(dbError)}`,
+        },
+        { status: 500 },
+      )
     }
-
-    console.log("Analysis complete, score:", analysisResult.totalScore)
-
-    // Devolver los resultados
-    return NextResponse.json({
-      success: true,
-      analysisResult,
-    })
   } catch (error) {
-    console.error("Error analyzing predefined materials:", error)
+    console.error("API: General error analyzing predefined materials:", error)
     return NextResponse.json(
       {
         success: false,
         error: error instanceof Error ? error.message : "Error desconocido al analizar los materiales",
+        errorDetails: String(error),
       },
       { status: 500 },
     )

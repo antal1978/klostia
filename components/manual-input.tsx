@@ -18,6 +18,7 @@ interface ManualInputProps {
 export default function ManualInput({ onSubmit, onCancel }: ManualInputProps) {
   const [materials, setMaterials] = useState<MaterialInput[]>([{ name: "", percentage: 100 }])
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [validationError, setValidationError] = useState<string | null>(null)
 
   const addMaterial = () => {
     if (materials.length < 5) {
@@ -60,6 +61,8 @@ export default function ManualInput({ onSubmit, onCancel }: ManualInputProps) {
       [field]: value,
     }
     setMaterials(updatedMaterials)
+    // Limpiar el error de validación cuando el usuario hace cambios
+    setValidationError(null)
   }
 
   const handleSubmit = () => {
@@ -67,40 +70,57 @@ export default function ManualInput({ onSubmit, onCancel }: ManualInputProps) {
       // Prevenir múltiples envíos
       if (isSubmitting) return
       setIsSubmitting(true)
+      setValidationError(null)
+
+      console.log("Validating materials before submission:", materials)
 
       // Validar que todos los campos estén completos
-      const isValid = materials.every((m) => m.name.trim() !== "" && m.percentage > 0)
-
-      if (isValid) {
-        // Normalizar los porcentajes para asegurar que sumen 100%
-        const totalPercentage = materials.reduce((sum, m) => sum + m.percentage, 0)
-
-        let normalizedMaterials
-        if (totalPercentage !== 100) {
-          const factor = 100 / totalPercentage
-          normalizedMaterials = materials.map((m) => ({
-            ...m,
-            percentage: Math.round(m.percentage * factor),
-          }))
-
-          // Ajustar el último material para asegurar que sumen exactamente 100%
-          const newTotal = normalizedMaterials.reduce((sum, m) => sum + m.percentage, 0)
-          if (newTotal !== 100) {
-            normalizedMaterials[normalizedMaterials.length - 1].percentage += 100 - newTotal
-          }
-        } else {
-          normalizedMaterials = materials
-        }
-
-        console.log("Submitting materials:", normalizedMaterials)
-        onSubmit(normalizedMaterials)
-      } else {
-        alert("Por favor completa todos los campos correctamente")
+      const emptyNames = materials.some((m) => m.name.trim() === "")
+      if (emptyNames) {
+        setValidationError("Por favor, ingresa un nombre para cada material")
         setIsSubmitting(false)
+        return
       }
+
+      const invalidPercentages = materials.some((m) => m.percentage <= 0 || m.percentage > 100)
+      if (invalidPercentages) {
+        setValidationError("Los porcentajes deben estar entre 1 y 100")
+        setIsSubmitting(false)
+        return
+      }
+
+      // Normalizar los porcentajes para asegurar que sumen 100%
+      const totalPercentage = materials.reduce((sum, m) => sum + m.percentage, 0)
+
+      console.log("Total percentage before normalization:", totalPercentage)
+
+      let normalizedMaterials
+      if (totalPercentage !== 100) {
+        const factor = 100 / totalPercentage
+        normalizedMaterials = materials.map((m) => ({
+          ...m,
+          percentage: Math.round(m.percentage * factor),
+        }))
+
+        // Ajustar el último material para asegurar que sumen exactamente 100%
+        const newTotal = normalizedMaterials.reduce((sum, m) => sum + m.percentage, 0)
+        if (newTotal !== 100) {
+          normalizedMaterials[normalizedMaterials.length - 1].percentage += 100 - newTotal
+        }
+      } else {
+        normalizedMaterials = materials
+      }
+
+      console.log("Submitting normalized materials:", normalizedMaterials)
+
+      // Llamar a la función onSubmit con los materiales normalizados
+      onSubmit(normalizedMaterials)
+
+      // Nota: No reseteamos isSubmitting aquí porque esperamos que la navegación
+      // a la página de resultados ocurra después de un procesamiento exitoso
     } catch (error) {
       console.error("Error al enviar materiales:", error)
-      alert("Ocurrió un error al procesar los materiales. Por favor, intenta de nuevo.")
+      setValidationError(`Error: ${error instanceof Error ? error.message : "Error desconocido"}`)
       setIsSubmitting(false)
     }
   }
@@ -133,6 +153,7 @@ export default function ManualInput({ onSubmit, onCancel }: ManualInputProps) {
                 value={material.name}
                 onChange={(e) => updateMaterial(index, "name", e.target.value)}
                 list={`materials-list-${index}`}
+                className={material.name.trim() === "" ? "border-red-300" : ""}
               />
               <datalist id={`materials-list-${index}`}>
                 {commonMaterials.map((m, i) => (
@@ -147,6 +168,7 @@ export default function ManualInput({ onSubmit, onCancel }: ManualInputProps) {
                 max="100"
                 value={material.percentage}
                 onChange={(e) => updateMaterial(index, "percentage", Number.parseInt(e.target.value) || 0)}
+                className={material.percentage <= 0 || material.percentage > 100 ? "border-red-300" : ""}
               />
             </div>
             <div className="w-8 flex justify-center">
@@ -163,12 +185,25 @@ export default function ManualInput({ onSubmit, onCancel }: ManualInputProps) {
       </div>
 
       <div className="flex justify-between mb-6">
-        <Button variant="outline" size="sm" onClick={addMaterial} disabled={materials.length >= 5}>
+        <Button variant="outline" size="sm" onClick={addMaterial} disabled={materials.length >= 5 || isSubmitting}>
           <Plus size={16} className="mr-1" /> Añadir material
         </Button>
 
-        <div className="text-sm text-gray-500">Total: {materials.reduce((sum, m) => sum + m.percentage, 0)}%</div>
+        <div
+          className={`text-sm ${
+            materials.reduce((sum, m) => sum + m.percentage, 0) !== 100
+              ? "text-orange-500 font-medium"
+              : "text-gray-500"
+          }`}
+        >
+          Total: {materials.reduce((sum, m) => sum + m.percentage, 0)}%
+          {materials.reduce((sum, m) => sum + m.percentage, 0) !== 100 && " (se ajustará a 100%)"}
+        </div>
       </div>
+
+      {validationError && (
+        <div className="mb-4 p-2 bg-red-50 border border-red-200 rounded text-red-600 text-sm">{validationError}</div>
+      )}
 
       <div className="flex gap-2">
         <Button variant="outline" className="flex-1" onClick={onCancel} disabled={isSubmitting}>
@@ -176,7 +211,10 @@ export default function ManualInput({ onSubmit, onCancel }: ManualInputProps) {
         </Button>
         <Button className="flex-1 bg-[#415643]" onClick={handleSubmit} disabled={isSubmitting}>
           {isSubmitting ? (
-            "Procesando..."
+            <>
+              <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
+              Procesando...
+            </>
           ) : (
             <>
               <Check size={16} className="mr-1" /> Confirmar

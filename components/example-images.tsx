@@ -42,8 +42,30 @@ export default function ExampleImages({ onSelectImage }: ExampleImagesProps) {
   const handleSelectImage = (index: number) => {
     setSelectedImage(index)
 
-    // Usar directamente los materiales predefinidos sin cargar la imagen
-    onSelectImage("data:image/png;base64,example", examples[index].predefinedMaterials)
+    // Asegurarnos de que los materiales predefinidos tengan la estructura correcta
+    const materials = examples[index].predefinedMaterials.map((material) => {
+      // Si ya tiene materialId pero no name, añadir un name basado en el materialId
+      if (material.materialId && !material.name) {
+        // Convertir materialId a un nombre legible (ej: "cotton_conv" -> "Algodón convencional")
+        let name = material.materialId
+          .replace(/_/g, " ")
+          .replace(/conv/g, "convencional")
+          .replace(/org/g, "orgánico")
+          .replace(/recycled/g, "reciclado")
+
+        // Capitalizar primera letra
+        name = name.charAt(0).toUpperCase() + name.slice(1)
+
+        return {
+          ...material,
+          name,
+        }
+      }
+      return material
+    })
+
+    // Usar los materiales procesados
+    onSelectImage("data:image/png;base64,example", materials)
   }
 
   return (
