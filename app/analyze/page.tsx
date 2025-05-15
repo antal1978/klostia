@@ -8,6 +8,7 @@ import { useRouter, useSearchParams } from "next/navigation"
 import ImageCapture from "@/components/image-capture"
 import ExampleImages from "@/components/example-images"
 import ManualInput from "@/components/manual-input"
+import { extractMaterialsFromOCR } from "@/lib/materials-utils"
 
 export default function AnalyzePage() {
   const router = useRouter()
@@ -133,13 +134,48 @@ export default function AnalyzePage() {
             }
           }
 
+          // Normalizar el nombre del material para buscar coincidencias
+          const normalizedName = material.name
+            .toLowerCase()
+            .trim()
+            .normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, "") // Eliminar acentos
+
           // Buscar el ID del material en la base de datos
-          const dbMaterial = materialsDB.materials.find(
-            (m: any) => m.name.toLowerCase() === material.name.toLowerCase(),
+          let dbMaterial = materialsDB.materials.find(
+            (m: any) =>
+              m.name
+                .toLowerCase()
+                .normalize("NFD")
+                .replace(/[\u0300-\u036f]/g, "") === normalizedName,
           )
 
-          // Si se encuentra, usar ese ID, de lo contrario usar un ID genérico
-          const materialId = dbMaterial ? dbMaterial.id : material.name.toLowerCase().replace(/\s+/g, "_")
+          // Si no se encuentra exactamente, buscar coincidencias parciales
+          if (!dbMaterial) {
+            dbMaterial = materialsDB.materials.find(
+              (m: any) =>
+                normalizedName.includes(
+                  m.name
+                    .toLowerCase()
+                    .normalize("NFD")
+                    .replace(/[\u0300-\u036f]/g, ""),
+                ) ||
+                m.name
+                  .toLowerCase()
+                  .normalize("NFD")
+                  .replace(/[\u0300-\u036f]/g, "")
+                  .includes(normalizedName),
+            )
+          }
+
+          // Usar la función de normalización como respaldo
+          const materialId = dbMaterial
+            ? dbMaterial.id
+            : material.name
+              ? extractMaterialsFromOCR.normalizeMaterialName(material.name)
+              : "unknown"
+
+          console.log(`Material mapping: "${material.name}" -> "${materialId}"`)
 
           return {
             materialId,

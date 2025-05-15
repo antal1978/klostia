@@ -89,32 +89,18 @@ export default function ManualInput({ onSubmit, onCancel }: ManualInputProps) {
         return
       }
 
-      // Normalizar los porcentajes para asegurar que sumen 100%
+      // Validar que los porcentajes sumen exactamente 100%
       const totalPercentage = materials.reduce((sum, m) => sum + m.percentage, 0)
-
-      console.log("Total percentage before normalization:", totalPercentage)
-
-      let normalizedMaterials
       if (totalPercentage !== 100) {
-        const factor = 100 / totalPercentage
-        normalizedMaterials = materials.map((m) => ({
-          ...m,
-          percentage: Math.round(m.percentage * factor),
-        }))
-
-        // Ajustar el último material para asegurar que sumen exactamente 100%
-        const newTotal = normalizedMaterials.reduce((sum, m) => sum + m.percentage, 0)
-        if (newTotal !== 100) {
-          normalizedMaterials[normalizedMaterials.length - 1].percentage += 100 - newTotal
-        }
-      } else {
-        normalizedMaterials = materials
+        setValidationError(`Los porcentajes deben sumar exactamente 100%. Actualmente suman ${totalPercentage}%`)
+        setIsSubmitting(false)
+        return
       }
 
-      console.log("Submitting normalized materials:", normalizedMaterials)
+      console.log("Submitting materials:", materials)
 
-      // Llamar a la función onSubmit con los materiales normalizados
-      onSubmit(normalizedMaterials)
+      // Llamar a la función onSubmit con los materiales
+      onSubmit(materials)
 
       // Nota: No reseteamos isSubmitting aquí porque esperamos que la navegación
       // a la página de resultados ocurra después de un procesamiento exitoso
@@ -128,7 +114,9 @@ export default function ManualInput({ onSubmit, onCancel }: ManualInputProps) {
   // Lista de materiales comunes para sugerencias
   const commonMaterials = [
     "Algodón",
+    "Algodón orgánico",
     "Poliéster",
+    "Poliéster reciclado",
     "Lana",
     "Seda",
     "Lino",
@@ -136,7 +124,14 @@ export default function ManualInput({ onSubmit, onCancel }: ManualInputProps) {
     "Elastano",
     "Acrílico",
     "Nylon",
-    "Lyocell",
+    "Nylon reciclado",
+    "Lyocell (Tencel)",
+    "Modal",
+    "Bambú",
+    "Cáñamo",
+    "Rayón",
+    "Spandex",
+    "Lycra",
   ]
 
   return (
@@ -190,14 +185,12 @@ export default function ManualInput({ onSubmit, onCancel }: ManualInputProps) {
         </Button>
 
         <div
-          className={`text-sm ${
-            materials.reduce((sum, m) => sum + m.percentage, 0) !== 100
-              ? "text-orange-500 font-medium"
-              : "text-gray-500"
+          className={`text-sm font-medium ${
+            materials.reduce((sum, m) => sum + m.percentage, 0) !== 100 ? "text-red-500" : "text-green-600"
           }`}
         >
           Total: {materials.reduce((sum, m) => sum + m.percentage, 0)}%
-          {materials.reduce((sum, m) => sum + m.percentage, 0) !== 100 && " (se ajustará a 100%)"}
+          {materials.reduce((sum, m) => sum + m.percentage, 0) !== 100 && " (debe ser 100%)"}
         </div>
       </div>
 
@@ -205,23 +198,27 @@ export default function ManualInput({ onSubmit, onCancel }: ManualInputProps) {
         <div className="mb-4 p-2 bg-red-50 border border-red-200 rounded text-red-600 text-sm">{validationError}</div>
       )}
 
-      <div className="flex gap-2">
-        <Button variant="outline" className="flex-1" onClick={onCancel} disabled={isSubmitting}>
-          Cancelar
-        </Button>
-        <Button className="flex-1 bg-[#415643]" onClick={handleSubmit} disabled={isSubmitting}>
-          {isSubmitting ? (
-            <>
-              <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
-              Procesando...
-            </>
-          ) : (
-            <>
-              <Check size={16} className="mr-1" /> Confirmar
-            </>
-          )}
-        </Button>
-      </div>
+      <Button
+        className="flex-1 bg-[#415643]"
+        onClick={handleSubmit}
+        disabled={
+          isSubmitting ||
+          materials.some((m) => m.name.trim() === "") ||
+          materials.some((m) => m.percentage <= 0 || m.percentage > 100) ||
+          materials.reduce((sum, m) => sum + m.percentage, 0) !== 100
+        }
+      >
+        {isSubmitting ? (
+          <>
+            <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
+            Procesando...
+          </>
+        ) : (
+          <>
+            <Check size={16} className="mr-1" /> Confirmar
+          </>
+        )}
+      </Button>
     </div>
   )
 }

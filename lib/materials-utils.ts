@@ -416,13 +416,20 @@ export function extractMaterialsFromOCR(text: string): MaterialComposition[] {
 
 // Función auxiliar para normalizar nombres de materiales
 function normalizeMaterialName(name: string): string {
-  const normalizedName = name.toLowerCase().trim()
+  if (!name) return "unknown"
+
+  const normalizedName = name
+    .toLowerCase()
+    .trim()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "") // Eliminar acentos
 
   // Mapeo de nombres comunes a IDs de materiales
   const materialMappings: Record<string, string> = {
     // Algodón
     algodon: "cotton_conv",
     cotton: "cotton_conv",
+    algodón: "cotton_conv",
     "algodón orgánico": "cotton_org",
     "algodon organico": "cotton_org",
     "organic cotton": "cotton_org",
@@ -430,6 +437,7 @@ function normalizeMaterialName(name: string): string {
     // Poliéster
     poliester: "polyester",
     polyester: "polyester",
+    poliéster: "polyester",
     "poliéster reciclado": "recycled_polyester",
     "poliester reciclado": "recycled_polyester",
     "recycled polyester": "recycled_polyester",

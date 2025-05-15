@@ -405,7 +405,7 @@ export default function MaterialsPage() {
                 <SelectTrigger>
                   <SelectValue placeholder="Selecciona una categoría" />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="bg-white shadow-lg border">
                   <SelectItem value="all">Todas las categorías</SelectItem>
                   <SelectItem value="natural">Natural</SelectItem>
                   <SelectItem value="natural animal">Natural animal</SelectItem>
@@ -440,7 +440,7 @@ export default function MaterialsPage() {
                   <SelectTrigger>
                     <SelectValue placeholder="Selecciona un material" />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className="bg-white shadow-lg border">
                     {materialsDB.materials.map((material) => (
                       <SelectItem key={material.id} value={material.id}>
                         {material.name}
@@ -456,7 +456,7 @@ export default function MaterialsPage() {
                   <SelectTrigger>
                     <SelectValue placeholder="Selecciona un material" />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className="bg-white shadow-lg border">
                     {materialsDB.materials.map((material) => (
                       <SelectItem key={material.id} value={material.id}>
                         {material.name}
