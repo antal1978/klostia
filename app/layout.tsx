@@ -10,6 +10,15 @@ const inter = Inter({ subsets: ["latin"] })
 export const metadata: Metadata = {
   title: "KLOSTIA - Análisis de Sostenibilidad",
   description: "Analiza la sostenibilidad de tus prendas textiles",
+  // Metadatos específicos para móviles
+  viewport: "width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no",
+  themeColor: "#415643",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "black-translucent",
+    title: "KLOSTIA",
+  },
+  manifest: "/manifest.json",
     generator: 'v0.dev'
 }
 

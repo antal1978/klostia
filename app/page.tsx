@@ -8,7 +8,7 @@ export default function Home() {
     <div className="flex flex-col min-h-screen">
       <header className="bg-[#415643] text-white p-4 text-center">
         <h1 className="text-2xl font-bold text-white mb-0">KLOSTIA</h1>
-        <p className="text-sm opacity-90 mt-1">Análisis de sostenibilidad textil</p>
+        <p className="text-sm text-white mt-1">Análisis de sostenibilidad textil</p>
       </header>
 
       <section className="p-4 bg-[#D9BCA3] text-center">

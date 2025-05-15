@@ -2,7 +2,7 @@
 
 import { useRef, useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
-import { Camera, X, FlipHorizontal, Lightbulb, Info } from "lucide-react"
+import { Camera, X, FlipHorizontal, Info } from "lucide-react"
 
 interface ImageCaptureProps {
   onCapture: (imageData: string) => void
@@ -15,8 +15,6 @@ export default function ImageCapture({ onCapture, onCancel }: ImageCaptureProps)
   const [stream, setStream] = useState<MediaStream | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [facingMode, setFacingMode] = useState<"environment" | "user">("environment")
-  const [flashlightOn, setFlashlightOn] = useState(false)
-  const [hasFlashlight, setHasFlashlight] = useState(false)
   const [showTips, setShowTips] = useState(true)
 
   useEffect(() => {
@@ -26,24 +24,24 @@ export default function ImageCapture({ onCapture, onCancel }: ImageCaptureProps)
           stream.getTracks().forEach((track) => track.stop())
         }
 
-        const mediaStream = await navigator.mediaDevices.getUserMedia({
-          video: { facingMode },
-        })
+        // Configuración básica para móviles
+        const constraints = {
+          video: {
+            facingMode,
+            width: { ideal: 640 }, // Reducido para mejor rendimiento
+            height: { ideal: 480 }, // Reducido para mejor rendimiento
+          },
+        }
+
+        const mediaStream = await navigator.mediaDevices.getUserMedia(constraints)
         setStream(mediaStream)
 
         if (videoRef.current) {
           videoRef.current.srcObject = mediaStream
         }
-
-        // Verificar si el dispositivo tiene linterna
-        const tracks = mediaStream.getVideoTracks()
-        if (tracks.length > 0) {
-          const capabilities = tracks[0].getCapabilities()
-          setHasFlashlight("torch" in capabilities)
-        }
       } catch (err) {
-        setError("No se pudo acceder a la cámara. Por favor, verifica los permisos.")
         console.error("Error accessing camera:", err)
+        setError("No se pudo acceder a la cámara. Por favor, verifica los permisos.")
       }
     }
 
@@ -60,50 +58,48 @@ export default function ImageCapture({ onCapture, onCancel }: ImageCaptureProps)
     }
   }, [facingMode])
 
+  // Función simplificada para capturar imágenes
   const captureImage = () => {
     if (videoRef.current && canvasRef.current) {
-      const video = videoRef.current
-      const canvas = canvasRef.current
-      const context = canvas.getContext("2d")
+      try {
+        const video = videoRef.current
+        const canvas = canvasRef.current
+        const context = canvas.getContext("2d")
 
-      if (context) {
-        canvas.width = video.videoWidth
-        canvas.height = video.videoHeight
-        context.drawImage(video, 0, 0, canvas.width, canvas.height)
+        if (!context) {
+          throw new Error("No se pudo obtener el contexto del canvas")
+        }
 
-        const imageData = canvas.toDataURL("image/jpeg", 0.9)
-        onCapture(imageData)
+        // Usar dimensiones pequeñas para móviles
+        const width = 640
+        const height = 480
 
-        // Stop the camera stream
+        // Establecer dimensiones del canvas
+        canvas.width = width
+        canvas.height = height
+
+        // Dibujar el frame actual del video en el canvas
+        context.drawImage(video, 0, 0, width, height)
+
+        // Obtener la imagen como JPEG con calidad reducida
+        const imageData = canvas.toDataURL("image/jpeg", 0.7)
+
+        // Detener la transmisión de la cámara
         if (stream) {
           stream.getTracks().forEach((track) => track.stop())
         }
+
+        // Pasar la imagen capturada al componente padre
+        onCapture(imageData)
+      } catch (error) {
+        console.error("Error capturing image:", error)
+        alert("Error al capturar la imagen. Por favor, intenta de nuevo.")
       }
     }
   }
 
   const toggleCamera = () => {
     setFacingMode(facingMode === "environment" ? "user" : "environment")
-  }
-
-  const toggleFlashlight = async () => {
-    if (!stream) return
-
-    try {
-      const tracks = stream.getVideoTracks()
-      if (tracks.length > 0) {
-        const track = tracks[0]
-        const newFlashlightState = !flashlightOn
-
-        await track.applyConstraints({
-          advanced: [{ torch: newFlashlightState }],
-        })
-
-        setFlashlightOn(newFlashlightState)
-      }
-    } catch (err) {
-      console.error("Error toggling flashlight:", err)
-    }
   }
 
   return (
@@ -116,17 +112,11 @@ export default function ImageCapture({ onCapture, onCancel }: ImageCaptureProps)
             </div>
           ) : (
             <>
-              <video ref={videoRef} autoPlay playsInline className="w-full h-[70vh] object-cover" />
+              <video ref={videoRef} autoPlay playsInline className="w-full h-[60vh] object-cover" />
 
-              {/* Marco guía mejorado */}
+              {/* Marco guía simplificado */}
               <div className="absolute inset-0 flex items-center justify-center">
-                <div className="w-4/5 h-1/3 border-2 border-green-500 rounded-md relative">
-                  {/* Esquinas del marco */}
-                  <div className="absolute top-0 left-0 w-4 h-4 border-t-2 border-l-2 border-green-500"></div>
-                  <div className="absolute top-0 right-0 w-4 h-4 border-t-2 border-r-2 border-green-500"></div>
-                  <div className="absolute bottom-0 left-0 w-4 h-4 border-b-2 border-l-2 border-green-500"></div>
-                  <div className="absolute bottom-0 right-0 w-4 h-4 border-b-2 border-r-2 border-green-500"></div>
-                </div>
+                <div className="w-4/5 h-1/3 border-2 border-green-500 rounded-md"></div>
               </div>
 
               {/* Consejos de captura */}
@@ -151,25 +141,13 @@ export default function ImageCapture({ onCapture, onCancel }: ImageCaptureProps)
             <X className="h-6 w-6" />
           </Button>
 
-          <div className="flex gap-2">
-            <Button
-              onClick={toggleCamera}
-              variant="outline"
-              className="rounded-full w-12 h-12 p-0 flex items-center justify-center"
-            >
-              <FlipHorizontal className="h-6 w-6" />
-            </Button>
-
-            {hasFlashlight && (
-              <Button
-                onClick={toggleFlashlight}
-                variant="outline"
-                className={`rounded-full w-12 h-12 p-0 flex items-center justify-center ${flashlightOn ? "bg-yellow-100" : ""}`}
-              >
-                <Lightbulb className={`h-6 w-6 ${flashlightOn ? "text-yellow-500" : ""}`} />
-              </Button>
-            )}
-          </div>
+          <Button
+            onClick={toggleCamera}
+            variant="outline"
+            className="rounded-full w-12 h-12 p-0 flex items-center justify-center"
+          >
+            <FlipHorizontal className="h-6 w-6" />
+          </Button>
 
           <Button
             onClick={captureImage}
