@@ -1,7 +1,7 @@
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
-import { Leaf, Droplet, Factory, Recycle } from "lucide-react"
+import { Leaf, Droplet, Factory, Recycle, History, FileImage } from "lucide-react"
 
 export default function Home() {
   return (
@@ -61,9 +61,27 @@ export default function Home() {
           </CardContent>
         </Card>
 
-        <div className="flex justify-center mb-8">
+        <div className="flex flex-col gap-4 mb-8">
           <Link href="/analyze" className="w-full">
             <Button className="w-full bg-[#415643] hover:bg-[#415643]/90 text-lg py-6">Analizar mi prenda</Button>
+          </Link>
+          <Link href="/analyze?mode=example" className="w-full">
+            <Button className="w-full bg-[#415643] hover:bg-[#415643]/90 text-lg py-6">
+              <FileImage className="mr-2 h-5 w-5" />
+              Probar con ejemplos
+            </Button>
+          </Link>
+          <Link href="/history" className="w-full">
+            <Button className="w-full bg-[#A67D88] hover:bg-[#A67D88]/90 text-lg py-6">
+              <History className="mr-2 h-5 w-5" />
+              Ver mi historial
+            </Button>
+          </Link>
+          <Link href="/materials" className="w-full">
+            <Button className="w-full bg-[#A67D88] hover:bg-[#A67D88]/90 text-lg py-6">
+              <Leaf className="mr-2 h-5 w-5" />
+              Explorar materiales
+            </Button>
           </Link>
         </div>
 

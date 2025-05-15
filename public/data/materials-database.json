@@ -1,0 +1,784 @@
+{
+  "materials": [
+    {
+      "id": "cotton_conv",
+      "name": "Algodón convencional",
+      "category": "Natural",
+      "description": "Fibra natural suave derivada de la planta de algodón. Altamente absorbente y transpirable, pero con alto impacto ambiental en su cultivo convencional.",
+      "environmentalImpact": {
+        "waterUsage": {
+          "value": "10000-20000",
+          "unit": "litros/kg"
+        },
+        "co2Emissions": {
+          "value": 5.5,
+          "unit": "kg CO₂e/kg"
+        },
+        "chemicalUse": "Alto",
+        "biodegradationTime": "1-5 años",
+        "renewability": "Renovable con impacto moderado"
+      },
+      "sustainabilityScore": {
+        "total": 4.5,
+        "water": 0,
+        "co2": 1,
+        "chemicals": 0.5,
+        "biodegradation": 2,
+        "renewability": 1
+      },
+      "careInstructions": ["Lavar en frío", "Secar al aire", "Planchar a temperatura media"],
+      "certifications": ["bci", "oeko"]
+    },
+    {
+      "id": "cotton_org",
+      "name": "Algodón orgánico",
+      "category": "Natural",
+      "description": "Cultivado sin pesticidas ni fertilizantes sintéticos. Más sostenible que el algodón convencional, con menor impacto en ecosistemas y salud humana.",
+      "environmentalImpact": {
+        "waterUsage": {
+          "value": "5000-10000",
+          "unit": "litros/kg"
+        },
+        "co2Emissions": {
+          "value": 2.5,
+          "unit": "kg CO₂e/kg"
+        },
+        "chemicalUse": "Bajo",
+        "biodegradationTime": "1-5 años",
+        "renewability": "Renovable con bajo impacto"
+      },
+      "sustainabilityScore": {
+        "total": 7.5,
+        "water": 0.5,
+        "co2": 1.5,
+        "chemicals": 1.5,
+        "biodegradation": 2,
+        "renewability": 2
+      },
+      "careInstructions": ["Lavar en frío", "Secar al aire", "Planchar a temperatura media"],
+      "certifications": ["gots", "ocs", "oeko"]
+    },
+    {
+      "id": "polyester",
+      "name": "Poliéster",
+      "category": "Sintético",
+      "description": "Fibra sintética derivada del petróleo. Duradera, resistente a arrugas y de secado rápido. No biodegradable y libera microplásticos al lavarse.",
+      "environmentalImpact": {
+        "waterUsage": {
+          "value": 10,
+          "unit": "litros/kg"
+        },
+        "co2Emissions": {
+          "value": 9.5,
+          "unit": "kg CO₂e/kg"
+        },
+        "chemicalUse": "Alto",
+        "biodegradationTime": "20-200 años",
+        "renewability": "No renovable"
+      },
+      "sustainabilityScore": {
+        "total": 3.5,
+        "water": 2,
+        "co2": 0.5,
+        "chemicals": 0.5,
+        "biodegradation": 0.5,
+        "renewability": 0
+      },
+      "careInstructions": ["Lavar en frío", "Usar bolsa para microfibras", "Evitar secadora"],
+      "certifications": ["oeko", "bluesign"]
+    },
+    {
+      "id": "recycled_polyester",
+      "name": "Poliéster reciclado",
+      "category": "Sintético reciclado",
+      "description": "Fabricado a partir de botellas de plástico y otros desechos de poliéster. Reduce el consumo de petróleo y residuos plásticos, pero sigue liberando microplásticos.",
+      "environmentalImpact": {
+        "waterUsage": {
+          "value": 10,
+          "unit": "litros/kg"
+        },
+        "co2Emissions": {
+          "value": 3.5,
+          "unit": "kg CO₂e/kg"
+        },
+        "chemicalUse": "Moderado",
+        "biodegradationTime": "20-200 años",
+        "renewability": "Reciclado, no renovable"
+      },
+      "sustainabilityScore": {
+        "total": 5.5,
+        "water": 2,
+        "co2": 1.5,
+        "chemicals": 1,
+        "biodegradation": 0.5,
+        "renewability": 0.5
+      },
+      "careInstructions": ["Lavar en frío", "Usar bolsa para microfibras", "Evitar secadora"],
+      "certifications": ["grs", "rcs", "oeko"]
+    },
+    {
+      "id": "nylon",
+      "name": "Nylon",
+      "category": "Sintético",
+      "description": "Fibra sintética resistente y elástica. Alta durabilidad pero derivada del petróleo, no biodegradable y con alto impacto en emisiones de CO₂.",
+      "environmentalImpact": {
+        "waterUsage": {
+          "value": 30,
+          "unit": "litros/kg"
+        },
+        "co2Emissions": {
+          "value": 15.2,
+          "unit": "kg CO₂e/kg"
+        },
+        "chemicalUse": "Alto",
+        "biodegradationTime": "30-40 años",
+        "renewability": "No renovable"
+      },
+      "sustainabilityScore": {
+        "total": 3.0,
+        "water": 1.5,
+        "co2": 0,
+        "chemicals": 0.5,
+        "biodegradation": 0.5,
+        "renewability": 0.5
+      },
+      "careInstructions": ["Lavar a mano o ciclo delicado", "No usar blanqueador", "Secar en plano"],
+      "certifications": ["oeko", "bluesign"]
+    },
+    {
+      "id": "recycled_nylon",
+      "name": "Nylon reciclado",
+      "category": "Sintético reciclado",
+      "description": "Fabricado a partir de redes de pesca, alfombras y otros desechos de nylon. Reduce residuos pero sigue siendo no biodegradable.",
+      "environmentalImpact": {
+        "waterUsage": {
+          "value": 30,
+          "unit": "litros/kg"
+        },
+        "co2Emissions": {
+          "value": 7.6,
+          "unit": "kg CO₂e/kg"
+        },
+        "chemicalUse": "Moderado",
+        "biodegradationTime": "30-40 años",
+        "renewability": "Reciclado, no renovable"
+      },
+      "sustainabilityScore": {
+        "total": 5.0,
+        "water": 1.5,
+        "co2": 1,
+        "chemicals": 1,
+        "biodegradation": 0.5,
+        "renewability": 1
+      },
+      "careInstructions": ["Lavar a mano o ciclo delicado", "No usar blanqueador", "Secar en plano"],
+      "certifications": ["grs", "oeko"]
+    },
+    {
+      "id": "acrylic",
+      "name": "Acrílico",
+      "category": "Sintético",
+      "description": "Fibra sintética ligera y suave que imita la lana. Derivada del petróleo, no biodegradable y con alto impacto ambiental en su producción.",
+      "environmentalImpact": {
+        "waterUsage": {
+          "value": 125,
+          "unit": "litros/kg"
+        },
+        "co2Emissions": {
+          "value": 11.5,
+          "unit": "kg CO₂e/kg"
+        },
+        "chemicalUse": "Muy alto",
+        "biodegradationTime": "200+ años",
+        "renewability": "No renovable"
+      },
+      "sustainabilityScore": {
+        "total": 2.0,
+        "water": 1,
+        "co2": 0,
+        "chemicals": 0,
+        "biodegradation": 0.5,
+        "renewability": 0.5
+      },
+      "careInstructions": ["Lavar a mano o ciclo delicado", "Secar en plano", "Planchar a temperatura baja"],
+      "certifications": ["oeko"]
+    },
+    {
+      "id": "wool",
+      "name": "Lana",
+      "category": "Natural animal",
+      "description": "Fibra natural de origen animal con excelente aislamiento térmico. Biodegradable pero con impacto en emisiones de metano y bienestar animal.",
+      "environmentalImpact": {
+        "waterUsage": {
+          "value": 170,
+          "unit": "litros/kg"
+        },
+        "co2Emissions": {
+          "value": 18,
+          "unit": "kg CO₂e/kg"
+        },
+        "chemicalUse": "Bajo a moderado",
+        "biodegradationTime": "1-5 años",
+        "renewability": "Renovable con impacto moderado"
+      },
+      "sustainabilityScore": {
+        "total": 5.0,
+        "water": 1,
+        "co2": 0,
+        "chemicals": 1,
+        "biodegradation": 2,
+        "renewability": 1
+      },
+      "careInstructions": ["Lavar a mano o ciclo de lana", "Secar en plano", "No usar secadora"],
+      "certifications": ["rws", "oeko"]
+    },
+    {
+      "id": "linen",
+      "name": "Lino",
+      "category": "Natural",
+      "description": "Fibra natural derivada de la planta de lino. Altamente transpirable y biodegradable, con menor impacto ambiental que el algodón.",
+      "environmentalImpact": {
+        "waterUsage": {
+          "value": 6.4,
+          "unit": "litros/kg"
+        },
+        "co2Emissions": {
+          "value": 1.7,
+          "unit": "kg CO₂e/kg"
+        },
+        "chemicalUse": "Bajo a moderado",
+        "biodegradationTime": "2 semanas a 2 años",
+        "renewability": "Altamente renovable"
+      },
+      "sustainabilityScore": {
+        "total": 8.0,
+        "water": 2,
+        "co2": 2,
+        "chemicals": 1,
+        "biodegradation": 2,
+        "renewability": 1
+      },
+      "careInstructions": ["Lavar en frío", "Secar al aire", "Planchar a temperatura alta cuando húmedo"],
+      "certifications": ["efs", "oeko"]
+    },
+    {
+      "id": "hemp",
+      "name": "Cáñamo",
+      "category": "Natural",
+      "description": "Fibra natural de rápido crecimiento que requiere pocos recursos. Altamente resistente, biodegradable y mejora la calidad del suelo.",
+      "environmentalImpact": {
+        "waterUsage": {
+          "value": 2.1,
+          "unit": "litros/kg"
+        },
+        "co2Emissions": {
+          "value": 1.1,
+          "unit": "kg CO₂e/kg"
+        },
+        "chemicalUse": "Muy bajo",
+        "biodegradationTime": "2-5 meses",
+        "renewability": "Altamente renovable"
+      },
+      "sustainabilityScore": {
+        "total": 9.0,
+        "water": 2,
+        "co2": 2,
+        "chemicals": 2,
+        "biodegradation": 2,
+        "renewability": 1
+      },
+      "careInstructions": ["Lavar en frío", "Secar al aire", "Planchar a temperatura media"],
+      "certifications": ["gots", "oeko"]
+    },
+    {
+      "id": "silk",
+      "name": "Seda",
+      "category": "Natural animal",
+      "description": "Fibra natural producida por gusanos de seda. Lujosa y biodegradable, pero con preocupaciones éticas relacionadas con el bienestar animal.",
+      "environmentalImpact": {
+        "waterUsage": {
+          "value": 1000,
+          "unit": "litros/kg"
+        },
+        "co2Emissions": {
+          "value": 7.5,
+          "unit": "kg CO₂e/kg"
+        },
+        "chemicalUse": "Moderado",
+        "biodegradationTime": "1-3 años",
+        "renewability": "Renovable con impacto moderado"
+      },
+      "sustainabilityScore": {
+        "total": 5.5,
+        "water": 0.5,
+        "co2": 1,
+        "chemicals": 1,
+        "biodegradation": 2,
+        "renewability": 1
+      },
+      "careInstructions": ["Lavar a mano en frío", "No retorcer", "Secar en plano", "Planchar a temperatura baja"],
+      "certifications": ["oeko"]
+    },
+    {
+      "id": "viscose",
+      "name": "Viscosa",
+      "category": "Semi-sintético",
+      "description": "Fibra semi-sintética derivada de la celulosa de la madera. Biodegradable pero con alto impacto químico y deforestación en su producción convencional.",
+      "environmentalImpact": {
+        "waterUsage": {
+          "value": 4271,
+          "unit": "litros/kg"
+        },
+        "co2Emissions": {
+          "value": 4.3,
+          "unit": "kg CO₂e/kg"
+        },
+        "chemicalUse": "Muy alto",
+        "biodegradationTime": "1-5 años",
+        "renewability": "Renovable con alto impacto"
+      },
+      "sustainabilityScore": {
+        "total": 4.0,
+        "water": 1,
+        "co2": 1,
+        "chemicals": 0,
+        "biodegradation": 1.5,
+        "renewability": 0.5
+      },
+      "careInstructions": ["Lavar a mano o ciclo delicado", "No usar blanqueador", "Secar en plano"],
+      "certifications": ["oeko"]
+    },
+    {
+      "id": "lyocell",
+      "name": "Lyocell (Tencel)",
+      "category": "Semi-sintético",
+      "description": "Fibra semi-sintética avanzada derivada de la pulpa de madera de eucalipto de bosques gestionados sosteniblemente. Proceso de producción de circuito cerrado.",
+      "environmentalImpact": {
+        "waterUsage": {
+          "value": 200,
+          "unit": "litros/kg"
+        },
+        "co2Emissions": {
+          "value": 2.6,
+          "unit": "kg CO₂e/kg"
+        },
+        "chemicalUse": "Bajo",
+        "biodegradationTime": "1-2 meses",
+        "renewability": "Renovable con bajo impacto"
+      },
+      "sustainabilityScore": {
+        "total": 8.0,
+        "water": 1.5,
+        "co2": 1.5,
+        "chemicals": 1.5,
+        "biodegradation": 2,
+        "renewability": 1.5
+      },
+      "careInstructions": ["Lavar en frío", "Ciclo delicado", "Secar en plano"],
+      "certifications": ["fsc", "oeko"]
+    },
+    {
+      "id": "modal",
+      "name": "Modal",
+      "category": "Semi-sintético",
+      "description": "Fibra semi-sintética derivada de la madera de haya. Más sostenible que la viscosa convencional, con menor impacto en agua y químicos.",
+      "environmentalImpact": {
+        "waterUsage": {
+          "value": 2500,
+          "unit": "litros/kg"
+        },
+        "co2Emissions": {
+          "value": 3.4,
+          "unit": "kg CO₂e/kg"
+        },
+        "chemicalUse": "Moderado",
+        "biodegradationTime": "1-3 años",
+        "renewability": "Renovable con impacto moderado"
+      },
+      "sustainabilityScore": {
+        "total": 6.0,
+        "water": 1,
+        "co2": 1.5,
+        "chemicals": 1,
+        "biodegradation": 1.5,
+        "renewability": 1
+      },
+      "careInstructions": ["Lavar en frío", "Ciclo delicado", "Secar en plano"],
+      "certifications": ["fsc", "oeko"]
+    },
+    {
+      "id": "elastane",
+      "name": "Elastano (Spandex/Lycra)",
+      "category": "Sintético",
+      "description": "Fibra sintética altamente elástica. Usada en pequeños porcentajes para dar elasticidad. No biodegradable y derivada del petróleo.",
+      "environmentalImpact": {
+        "waterUsage": {
+          "value": 30,
+          "unit": "litros/kg"
+        },
+        "co2Emissions": {
+          "value": 11.9,
+          "unit": "kg CO₂e/kg"
+        },
+        "chemicalUse": "Alto",
+        "biodegradationTime": "20-200 años",
+        "renewability": "No renovable"
+      },
+      "sustainabilityScore": {
+        "total": 2.5,
+        "water": 1.5,
+        "co2": 0,
+        "chemicals": 0.5,
+        "biodegradation": 0.5,
+        "renewability": 0
+      },
+      "careInstructions": ["Lavar en frío", "No usar blanqueador", "Evitar secadora"],
+      "certifications": ["oeko"]
+    },
+    {
+      "id": "bamboo_viscose",
+      "name": "Viscosa de bambú",
+      "category": "Semi-sintético",
+      "description": "Fibra derivada del bambú procesado químicamente. El bambú crece rápidamente con pocos recursos, pero el proceso químico tiene alto impacto ambiental.",
+      "environmentalImpact": {
+        "waterUsage": {
+          "value": 4000,
+          "unit": "litros/kg"
+        },
+        "co2Emissions": {
+          "value": 4.0,
+          "unit": "kg CO₂e/kg"
+        },
+        "chemicalUse": "Alto",
+        "biodegradationTime": "1-5 años",
+        "renewability": "Renovable con impacto moderado"
+      },
+      "sustainabilityScore": {
+        "total": 5.0,
+        "water": 1,
+        "co2": 1,
+        "chemicals": 0.5,
+        "biodegradation": 1.5,
+        "renewability": 1
+      },
+      "careInstructions": ["Lavar en frío", "Ciclo delicado", "Secar en plano"],
+      "certifications": ["oeko"]
+    },
+    {
+      "id": "bamboo_lyocell",
+      "name": "Lyocell de bambú",
+      "category": "Semi-sintético",
+      "description": "Fibra de bambú procesada con el método lyocell, más sostenible que la viscosa de bambú. Combina las propiedades del bambú con un proceso de producción de circuito cerrado más respetuoso con el medio ambiente.",
+      "environmentalImpact": {
+        "waterUsage": {
+          "value": 600,
+          "unit": "litros/kg"
+        },
+        "co2Emissions": {
+          "value": 2.8,
+          "unit": "kg CO₂e/kg"
+        },
+        "chemicalUse": "Bajo",
+        "biodegradationTime": "1-3 meses",
+        "renewability": "Renovable con bajo impacto"
+      },
+      "sustainabilityScore": {
+        "total": 7.5,
+        "water": 1.5,
+        "co2": 1.5,
+        "chemicals": 1.5,
+        "biodegradation": 2,
+        "renewability": 1
+      },
+      "careInstructions": ["Lavar en frío", "Ciclo delicado", "Secar en plano"],
+      "certifications": ["fsc", "oeko"]
+    },
+    {
+      "id": "pinatex",
+      "name": "Piñatex",
+      "category": "Alternativo",
+      "description": "Material innovador hecho de fibras de hojas de piña. Alternativa vegana al cuero con bajo impacto ambiental y aprovechamiento de residuos agrícolas.",
+      "environmentalImpact": {
+        "waterUsage": {
+          "value": 5,
+          "unit": "litros/kg"
+        },
+        "co2Emissions": {
+          "value": 1.3,
+          "unit": "kg CO₂e/kg"
+        },
+        "chemicalUse": "Bajo",
+        "biodegradationTime": "6 meses a 1 año",
+        "renewability": "Altamente renovable"
+      },
+      "sustainabilityScore": {
+        "total": 8.5,
+        "water": 2,
+        "co2": 2,
+        "chemicals": 1.5,
+        "biodegradation": 1.5,
+        "renewability": 1.5
+      },
+      "careInstructions": [
+        "Limpiar con paño húmedo",
+        "Evitar inmersión en agua",
+        "Mantener alejado de fuentes de calor"
+      ],
+      "certifications": ["peta", "oeko"]
+    },
+    {
+      "id": "qmonos",
+      "name": "Qmonos (Seda sintética)",
+      "category": "Biotecnológico",
+      "description": "Fibra de proteína similar a la seda producida mediante fermentación microbiana. Alternativa ética a la seda animal con propiedades similares.",
+      "environmentalImpact": {
+        "waterUsage": {
+          "value": 300,
+          "unit": "litros/kg"
+        },
+        "co2Emissions": {
+          "value": 2.1,
+          "unit": "kg CO₂e/kg"
+        },
+        "chemicalUse": "Moderado",
+        "biodegradationTime": "1-2 años",
+        "renewability": "Renovable con bajo impacto"
+      },
+      "sustainabilityScore": {
+        "total": 7.0,
+        "water": 1.5,
+        "co2": 1.5,
+        "chemicals": 1,
+        "biodegradation": 1.5,
+        "renewability": 1.5
+      },
+      "careInstructions": ["Lavar a mano en frío", "No retorcer", "Secar en plano"],
+      "certifications": ["peta", "oeko"]
+    },
+    {
+      "id": "seacell",
+      "name": "SeaCell",
+      "category": "Semi-sintético",
+      "description": "Fibra celulósica enriquecida con algas marinas. Combina las propiedades del lyocell con los beneficios de las algas para la piel.",
+      "environmentalImpact": {
+        "waterUsage": {
+          "value": 250,
+          "unit": "litros/kg"
+        },
+        "co2Emissions": {
+          "value": 2.8,
+          "unit": "kg CO₂e/kg"
+        },
+        "chemicalUse": "Bajo",
+        "biodegradationTime": "2-3 meses",
+        "renewability": "Renovable con bajo impacto"
+      },
+      "sustainabilityScore": {
+        "total": 7.5,
+        "water": 1.5,
+        "co2": 1.5,
+        "chemicals": 1.5,
+        "biodegradation": 1.5,
+        "renewability": 1.5
+      },
+      "careInstructions": ["Lavar en frío", "Ciclo delicado", "Secar en plano"],
+      "certifications": ["oeko", "fsc"]
+    },
+    {
+      "id": "orange_fiber",
+      "name": "Fibra de naranja",
+      "category": "Alternativo",
+      "description": "Fibra innovadora hecha a partir de subproductos de la industria de cítricos. Aprovecha residuos agrícolas para crear un textil sostenible.",
+      "environmentalImpact": {
+        "waterUsage": {
+          "value": 30,
+          "unit": "litros/kg"
+        },
+        "co2Emissions": {
+          "value": 1.8,
+          "unit": "kg CO₂e/kg"
+        },
+        "chemicalUse": "Bajo a moderado",
+        "biodegradationTime": "3-6 meses",
+        "renewability": "Altamente renovable"
+      },
+      "sustainabilityScore": {
+        "total": 8.0,
+        "water": 1.5,
+        "co2": 2,
+        "chemicals": 1.5,
+        "biodegradation": 1.5,
+        "renewability": 1.5
+      },
+      "careInstructions": ["Lavar a mano en frío", "No usar blanqueador", "Secar en plano"],
+      "certifications": ["gots", "oeko"]
+    }
+  ],
+  "certifications": [
+    {
+      "id": "gots",
+      "name": "GOTS",
+      "fullName": "Global Organic Textile Standard",
+      "description": "Certifica que los textiles contienen un mínimo de 70% de fibras orgánicas y cumplen con criterios ambientales y sociales en toda la cadena de suministro.",
+      "website": "https://www.global-standard.org/"
+    },
+    {
+      "id": "ocs",
+      "name": "OCS",
+      "fullName": "Organic Content Standard",
+      "description": "Verifica la presencia y cantidad de material orgánico en un producto final y rastrea el flujo de la materia prima.",
+      "website": "https://textileexchange.org/standards/organic-content-standard/"
+    },
+    {
+      "id": "bci",
+      "name": "BCI",
+      "fullName": "Better Cotton Initiative",
+      "description": "Promueve mejores estándares en el cultivo de algodón para hacerlo más sostenible ambiental y socialmente.",
+      "website": "https://bettercotton.org/"
+    },
+    {
+      "id": "grs",
+      "name": "GRS",
+      "fullName": "Global Recycled Standard",
+      "description": "Verifica el contenido reciclado y garantiza prácticas sociales, ambientales y químicas responsables en la producción.",
+      "website": "https://textileexchange.org/standards/global-recycled-standard/"
+    },
+    {
+      "id": "rcs",
+      "name": "RCS",
+      "fullName": "Recycled Claim Standard",
+      "description": "Rastrea y verifica el contenido de materiales reciclados en un producto final.",
+      "website": "https://textileexchange.org/standards/recycled-claim-standard-global-recycled-standard/"
+    },
+    {
+      "id": "bluesign",
+      "name": "bluesign®",
+      "fullName": "bluesign® system",
+      "description": "Garantiza que los productos textiles se fabrican utilizando químicos seguros, conservando recursos y minimizando el impacto ambiental.",
+      "website": "https://www.bluesign.com/"
+    },
+    {
+      "id": "oeko",
+      "name": "OEKO-TEX",
+      "fullName": "OEKO-TEX Standard 100",
+      "description": "Certifica que los textiles están libres de sustancias nocivas para la salud humana.",
+      "website": "https://www.oeko-tex.com/"
+    },
+    {
+      "id": "rws",
+      "name": "RWS",
+      "fullName": "Responsible Wool Standard",
+      "description": "Certifica que la lana proviene de granjas que respetan el bienestar animal y siguen prácticas de gestión responsable de la tierra.",
+      "website": "https://textileexchange.org/standards/responsible-wool/"
+    },
+    {
+      "id": "fsc",
+      "name": "FSC",
+      "fullName": "Forest Stewardship Council",
+      "description": "Certifica que los productos forestales (como la pulpa para fibras celulósicas) provienen de bosques gestionados responsablemente.",
+      "website": "https://fsc.org/"
+    },
+    {
+      "id": "efs",
+      "name": "EFS",
+      "fullName": "European Flax Standard",
+      "description": "Certifica el lino cultivado en Europa Occidental siguiendo prácticas agrícolas sostenibles.",
+      "website": "https://www.europeanflax.com/"
+    },
+    {
+      "id": "peta",
+      "name": "PETA-Approved Vegan",
+      "fullName": "People for the Ethical Treatment of Animals",
+      "description": "Certifica que los productos no contienen materiales de origen animal y no han sido testados en animales.",
+      "website": "https://www.peta.org/living/personal-care-fashion/peta-approved-vegan-logo/"
+    },
+    {
+      "id": "cradle",
+      "name": "Cradle to Cradle",
+      "fullName": "Cradle to Cradle Certified",
+      "description": "Evalúa productos en cinco categorías: salud de los materiales, reutilización, energía renovable, gestión del agua y justicia social.",
+      "website": "https://www.c2ccertified.org/"
+    },
+    {
+      "id": "eu_ecolabel",
+      "name": "EU Ecolabel",
+      "fullName": "European Union Ecolabel",
+      "description": "Etiqueta ecológica oficial de la Unión Europea que certifica productos con menor impacto ambiental durante todo su ciclo de vida.",
+      "website": "https://ec.europa.eu/environment/ecolabel/"
+    }
+  ],
+  "materialCategories": [
+    {
+      "id": "natural",
+      "name": "Natural",
+      "description": "Fibras obtenidas directamente de plantas o animales con mínimo procesamiento químico."
+    },
+    {
+      "id": "natural_animal",
+      "name": "Natural animal",
+      "description": "Fibras obtenidas de animales como lana, seda, etc."
+    },
+    {
+      "id": "synthetic",
+      "name": "Sintético",
+      "description": "Fibras creadas artificialmente a partir de polímeros derivados del petróleo."
+    },
+    {
+      "id": "synthetic_recycled",
+      "name": "Sintético reciclado",
+      "description": "Fibras sintéticas fabricadas a partir de materiales reciclados."
+    },
+    {
+      "id": "semi_synthetic",
+      "name": "Semi-sintético",
+      "description": "Fibras fabricadas a partir de celulosa natural que ha sido químicamente procesada."
+    },
+    {
+      "id": "alternative",
+      "name": "Alternativo",
+      "description": "Materiales innovadores fabricados a partir de fuentes no convencionales o residuos."
+    },
+    {
+      "id": "biotechnological",
+      "name": "Biotecnológico",
+      "description": "Fibras creadas mediante procesos biológicos como fermentación o cultivo celular."
+    }
+  ],
+  "sustainabilityFactors": [
+    {
+      "id": "water",
+      "name": "Uso de agua",
+      "description": "Cantidad de agua necesaria para producir la fibra, desde el cultivo hasta el procesamiento final.",
+      "importance": "Alto",
+      "unit": "litros/kg"
+    },
+    {
+      "id": "co2",
+      "name": "Emisiones de CO₂",
+      "description": "Cantidad de gases de efecto invernadero emitidos durante la producción de la fibra.",
+      "importance": "Alto",
+      "unit": "kg CO₂e/kg"
+    },
+    {
+      "id": "chemicals",
+      "name": "Uso de químicos",
+      "description": "Nivel de productos químicos utilizados en el cultivo y procesamiento de la fibra.",
+      "importance": "Alto",
+      "unit": "cualitativo"
+    },
+    {
+      "id": "biodegradation",
+      "name": "Biodegradabilidad",
+      "description": "Tiempo que tarda la fibra en descomponerse naturalmente al final de su vida útil.",
+      "importance": "Medio",
+      "unit": "tiempo"
+    },
+    {
+      "id": "renewability",
+      "name": "Renovabilidad",
+      "description": "Capacidad de la fuente de la fibra para regenerarse y su impacto en los ecosistemas.",
+      "importance": "Medio",
+      "unit": "cualitativo"
+    }
+  ]
+}
